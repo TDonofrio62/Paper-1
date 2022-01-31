@@ -1,10 +1,9 @@
 ---
-title: "My title"
+title: "Shooting Occurences in Toronto Have Increased Greatly All Throughout"
 subtitle: "My subtitle if needed"
 author: 
   - Thomas D'Onofrio
-  - Another author
-thanks: "Code and data are available at: LINK."
+thanks: "Code and data are available at: https://github.com/TDonofrio62/Paper-1."
 date: "`r format(Sys.time(), '%d %B %Y')`"
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 output:
@@ -17,6 +16,7 @@ bibliography: references.bib
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(palmerpenguins)
+library(knitr)
 ```
 
 # Introduction
@@ -26,6 +26,88 @@ You can and should cross-reference sections and sub-sections. For instance, Sect
 
 
 # Data
+
+(Table \@ref(fig:dataextract))
+```{r datextract}
+
+shooting_occurences <- read_csv(here::here("inputs/data/shooting_occurences.csv"))
+
+shooting_occurences %>%
+  slice(1,2,18,19,36,37,54,55,72,73,90,91) %>%
+  select(occurred_year, geo_division, num_shootings) %>%
+  kable(
+    caption= "12 Observations from dataset of shooting occurences in Toronto",
+    col.names = c("Year", "Geographic Division", "Number of Shootings"),
+    booktabs = TRUE,
+    linesep = "",
+    align = c('c', 'c', 'c')
+  )
+  
+```
+
+```{r yearlyshootings}
+shooting_occurences %>%
+  select(occurred_year,num_shootings)%>%
+  group_by(occurred_year)%>%
+  summarize(number_of_shootings = sum(num_shootings)) %>%
+  kable(
+    caption= "Number of Shootings in Toronto each year from 2014-2019",
+    col.names = c("Year", "Number of Shootings"),
+    booktabs = TRUE,
+    linesep = "",
+    align = c('c', 'c')
+  )
+
+```
+
+```{r, fig.cap= "Relationship between number of shootings in each police division and year"}
+shooting_occurences %>%
+  ggplot(aes(x = occurred_year, y = num_shootings, color = geo_division)) +
+  geom_point()+
+  theme_bw() +
+  labs(x = "Year",
+       y = "Number of Shootings",
+       color = "Geographic Division"
+       )
+```
+
+```{r}
+shooting_occurences %>%
+  ggplot(aes(x = geo_division, y = num_shootings, color = as.character(occurred_year))) +
+  geom_point()+
+  theme_bw() +
+  labs(x = "Geographic Division",
+       y = "Number of Shootings",
+       color = "Year"
+       )+
+   scale_color_brewer(palette = "Set1", direction=-1)
+```
+
+
+
+```{r}
+shooting_occurences %>%
+  ggplot(aes(x = occurred_year, y = num_shootings, fill = geo_division)) + 
+  geom_bar(stat='identity') +
+  theme_bw() +
+  labs(x = "Year",
+       y = "Number of Shootings",
+       fill = "Geographic Division"
+       )
+```
+
+```{r}
+shooting_occurences %>%
+  ggplot(aes(x = geo_division, y = num_shootings, fill = as.character(occurred_year))) + 
+  geom_bar(stat='identity') +
+  theme_bw() +
+  labs(x = "Geographic Division",
+       y = "Number of Shootings",
+       fill = "Year"
+       )+
+  scale_fill_viridis_d()
+```
+
 
 Our data is of penguins (Figure \@ref(fig:bills)).
 

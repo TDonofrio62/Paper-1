@@ -19,8 +19,6 @@ library(opendatatoronto)
 
 #Get Package
 
-
-
 package <- show_package("f29feb49-ceb1-44bf-a2b6-5fc6a0e6147a")
 package
 
@@ -29,9 +27,9 @@ resources
 
 #This package has only one dataset within it and must be selected by default
 
-raw_data <- get_resource(resource ="b4fd5f2f-fe0d-4229-af47-d87d91fc14ce")
-raw_data
+shooting_data_unclean <- get_resource(resource ="b4fd5f2f-fe0d-4229-af47-d87d91fc14ce")
+shooting_data_unclean
 
-
-
+#### Save Data ####
+write_csv(shooting_data_unclean, "inputs/data/shooting_data_unclean.csv")
          
