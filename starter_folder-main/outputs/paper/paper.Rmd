@@ -21,18 +21,25 @@ library(knitr)
 
 # Introduction
 
+In this paper, we use R (@citeR) to analyze a dataset from (@citeODT)
+
 You can and should cross-reference sections and sub-sections. For instance, Section \@ref(data). R Markdown automatically makes the sections lower case and adds a dash to spaces to generate labels, for instance, Section \@ref(first-discussion-point). 
 
 
 
 # Data
 
-(Table \@ref(fig:dataextract))
-```{r datextract}
+The dataset being used in this paper was taken from the City of Toronto's open data portal [@citeODT]. It is a subset of a larger collection of data called The Toronto's Police Services Annual Statistical Report. This report contains data based on police related topics including a variety of different types of crimes and other incidents, and administrative information. The dataset that will be analyzed draws from the "Shooting Occurrences" portion of the annual statistical report. It contains all Toronto shooting incidents between 2014 and 2019. A shooting occurrence is described as an altercation where a projectile was shot from a firearm and injured a person [@citeTPS]. Toronto Police Services do not count suicidal attempts or shots taken by Police in the data.
 
-shooting_occurences <- read_csv(here::here("inputs/data/shooting_occurences.csv"))
+The data is collected by Policemen through the Toronto Police system. Any time a shooting is reported by an officer, it is put into the system, and is eventually added as a observation in the overall dataset. This data technically is the population of all police reported shooting incidents by their definition, but it could also be considered a sample of all shooting incidents since many go unreported. As the dataset is made up of observations that follow a specific definition, it helps to avoid many of the biases we typically see in datasets as there is less subjectivity. All in all, the system Toronto Police uses allows for this dataset to be very reliable and trustworthy. Toronto Police takes their data very seriously, which is evident by their Public Data Safety Portal [@citeTSDP], and thus the dataset this report is working with is quite strong.
 
-shooting_occurences %>%
+Despite this, the data does not come without any implications. 
+
+```{r dataextract, echo = FALSE, message=FALSE}
+
+shooting_occurrences <- read_csv(here::here("inputs/data/shooting_occurences.csv"))
+
+shooting_occurrences %>%
   slice(1,2,18,19,36,37,54,55,72,73,90,91) %>%
   select(occurred_year, geo_division, num_shootings) %>%
   kable(
@@ -45,8 +52,14 @@ shooting_occurences %>%
   
 ```
 
-```{r yearlyshootings}
-shooting_occurences %>%
+Table \@ref(tab:dataextract) shows an extract of 12 data points from the overall dataset which contained 96 observations. Two observations from each year are shown in the extract. The original data had 6 variables, including 3 redundant identifier variables, so it was narrowed down to the three main variables seen in the extract, plus one identifier variable was kept for organizational purposes. These three main important variables that will be worked with in the paper are Year, Geographic Division, and Number of shootings, which are occurred_year, geo_division, and num_shootings respectively in the dataset. 
+
+Occurred year is fairly self explanatory, and is the year in which all the shootings in an observation took place. It is a numerical variable, but was also converted to a categorical at points for use in visulaizations seen later. Geo division is a categorical variable representing the geographically determined area boundaries for each police division. Num of shootings is a numerical variable that counts the number of shootings corresponding to each observation.
+
+As shown in Table \@ref(tab:dataextract), each observation tells us the number of shootings that occur in a specific police division, based on the geographical boundaries described above, in a certain year. For example, the last observation seen in Table \@ref(tab:dataextract) tells us that in 2019, 35 shootings occurred within police division 42. These data points can be analyzed together in order to tell us a story about shooting incidents in Toronto.
+
+```{r yearlyshootings, echo = FALSE}
+shooting_occurrences %>%
   select(occurred_year,num_shootings)%>%
   group_by(occurred_year)%>%
   summarize(number_of_shootings = sum(num_shootings)) %>%
@@ -59,9 +72,12 @@ shooting_occurences %>%
   )
 
 ```
+By grouping the data by year, Table \@ref(tab:yearlyshootings) shows how many shootings have occurred each year in Toronto. It can be seen that shootings have increased dramatically from 2014 to 2019, more than doubling, going from 177 to 492 shootings. For the most part, shootings have also increased each year apart from 2017. This increase in shootings is something worth analyzing, and can be better seen and understood through the use of a visual.
 
-```{r, fig.cap= "Relationship between number of shootings in each police division and year"}
-shooting_occurences %>%
+Figure \@ref(fig:scatter) shows this relationship between the number of shootings in Toronto and the year in which they occurred, while also showing which police divisions each observation occurred in.
+
+```{r scatter, fig.cap= "Relationship between number of shootings in each police division and year", echo = FALSE}
+shooting_occurrences %>%
   ggplot(aes(x = occurred_year, y = num_shootings, color = geo_division)) +
   geom_point()+
   theme_bw() +
@@ -70,36 +86,32 @@ shooting_occurences %>%
        color = "Geographic Division"
        )
 ```
+Plotting every single observation in the dataset gives us a better idea about the changes for Toronto's shooting occurrences, and also allows us to link them to each division. The plot points for each year seem to shift up as a collective year after year, suggesting that shootings are increasing all around Toronto. No police division's plot point is lower in 2019 than it was in 2014, which confirms this thought. Police Divisions that have the most shootings see much bigger yearly increases compared to the regions with less shootings when judging based on magnitude of the increases. Relative to how many shootings occur in each division, all divisions seem to increase by similar amounts.
 
-```{r}
-shooting_occurences %>%
-  ggplot(aes(x = geo_division, y = num_shootings, color = as.character(occurred_year))) +
-  geom_point()+
-  theme_bw() +
-  labs(x = "Geographic Division",
-       y = "Number of Shootings",
-       color = "Year"
-       )+
-   scale_color_brewer(palette = "Set1", direction=-1)
-```
+A bar plot will make it easier to see the increasing relationship between the year and the number of shootings. Figure \@ref(fig:bar1) shows this relationship.
 
-
-
-```{r}
-shooting_occurences %>%
+```{r bar1, fig.cap= "Bar plot showing number of shootings in each police division for every year", echo = FALSE}
+shooting_occurrences %>%
   ggplot(aes(x = occurred_year, y = num_shootings, fill = geo_division)) + 
   geom_bar(stat='identity') +
   theme_bw() +
   labs(x = "Year",
        y = "Number of Shootings",
        fill = "Geographic Division"
-       )
+       )+
+  scale_fill_viridis_d(option="turbo")+
+  scale_x_continuous(breaks = c(2014,2015,2016,2017,2018,2019)) 
 ```
+The increase in shootings per year is even more evident now. The bar for 2019 towers over the much smaller bar representing 2014 shootings, once again showing just how much worse shooting incidents have gotten over these 5 years. On a year to year basis, we see the biggest growth in shootings from 2014 to 2016, suggesting something important changes around this time period. There is then a small dip in 2017, before a steady increase in shootings starts to occur again from this point on wards. A notable increase can be seen from 2018 to 2019, as 2019 saw the biggest increase in shootings since 2016. If this is a sign of another period of large growth like there was from 2014 to 2016, Toronto should be very worried. Regardless, there is certainly no signs of the trend slowing down anytime soon, and the number of shootings should continue to increase in future years, especially once the world recovers from the COVID-19 pandemic.
 
-```{r}
-shooting_occurences %>%
-  ggplot(aes(x = geo_division, y = num_shootings, fill = as.character(occurred_year))) + 
-  geom_bar(stat='identity') +
+Figure \@ref(fig:bar1) also makes the changes in number of shootings in each police division more evident. Every single coloured section representing the divisions are larger in 2019 than 2014, and the number of shootings for most divisons increased every single year. The larger police divisions specifically saw massive growths in the size of their colour in the bars of the Figure Figure \@ref(fig:bar1), which was also, albeit slightly less, clear in Figure \@ref(fig:scatter). This can be seen in D12's, D23's, and D31's coloured parts of the bars, as their filled in areas in the bars are very large in 2019 compared to what they were in 2014. A final figure, Figure \@ref(fig:bar2), can be used to show how the number of shootings has changed in each division even further.
+
+
+```{r bar2, fig.cap= "Bar plot showing number of shootings every year for each police divison", echo = FALSE}
+shooting_occurrences %>%
+  ggplot(aes(x = geo_division, y = num_shootings, 
+             fill = as.character(occurred_year))) + 
+  geom_bar(stat='identity', position = position_stack(reverse = TRUE)) + 
   theme_bw() +
   labs(x = "Geographic Division",
        y = "Number of Shootings",
@@ -107,38 +119,13 @@ shooting_occurences %>%
        )+
   scale_fill_viridis_d()
 ```
+It can further be seen in Figure \@ref(fig:bar2) that every police division had more shootings occur within it in 2019, the yellow part of every bar, compared to in 2014 which is shown by the dark purple parts of the bars. It is also clear how almost every police division has seen a steady increase in shootings since the size each colour representing a year are almost always increasing in size.
 
+The divisions with much more shooting activity than the rest are very evident in Figure \@ref(fig:bar2) as their overall bar size are much taller than the rest of the divisions, which is important to note as Toronto Police may opt to add more police presence to these divisions in the future. The fact that the yellow portions of the bars representing 2019 are so much larger relative to the dark purple bars representing 2014 really shows just how bad the number of shootings in these areas specifically has gotten.
 
-Our data is of penguins (Figure \@ref(fig:bills)).
+Overall, our data has painted a clear story about the shooting occurences in Toronto. It is extremely evident based on Table \ref@(tab:yearlyshootings), Figure \@ref(fig:scatter), and Figure \@ref(fig:bar1) that the number of shooting occurrences in Toronto have increased greatly from 2014 to 2019, and that this increase has been occurring steadily over the years since 2014. While the other figures helped, Figure \ref@(fig:bar2) made it clear that shooting occurrences have been increasing all throughout Toronto in every single police division, although some of the larger divisions in particular have seen even bigger increases than the rest.
 
-```{r bills, fig.cap="Bills of penguins", echo = FALSE}
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = FALSE) +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-Also bills and their average (Figure \@ref(fig:billssssss)). (Notice how you can change the height and width so they don't take the whole page?)
-
-```{r billssssss, fig.cap="More bills of penguins", echo = FALSE, fig.width=8, fig.height=4}
-
-# This needs to be about the random data tha tI sasmpled?
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = FALSE) +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk way more about it. 
-
+While the data from Open Data Toronto (@citeODT) and Toronto's Police Services [@citeTPS] has been very valuable and was used to make important realizations about shooting occurrences in Toronto, it does not come without its implications. 
 
 
 # Model
