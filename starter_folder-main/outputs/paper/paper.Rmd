@@ -1,11 +1,10 @@
 ---
-title: "Shooting Occurences in Toronto Have Increased Greatly All Throughout"
-subtitle: "My subtitle if needed"
+title: "Shooting Occurrences in Toronto have increased substantially all throughout the city: A Data Analysis"
 author: 
   - Thomas D'Onofrio
-thanks: "Code and data are available at: https://github.com/TDonofrio62/Paper-1."
+thanks: "Code and data are available at: https://github.com/TDonofrio62/Paper-on-Shooting-Occurrences-in-Toronto."
 date: "`r format(Sys.time(), '%d %B %Y')`"
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "Toronto, which was once seen as a safe place to live, has seemingly had a lot more gun violence occur within the city over the years. Data on shooting occurrences in Toronto, including the years and police divisions in which they occurred ,has been obtained, and will be analyzed in this paper with the use of several figures. It was found that shooting occurrences have greatly increased all throughtout the city of Toronto, and overall have more than doubled since 2014. Our discovery unfortunately has some implications, as police have racial biases against people of colour which have caused the dataset worked with to be biased."
 output:
   bookdown::pdf_document2
 toc: FALSE
@@ -13,33 +12,37 @@ bibliography: references.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
-library(palmerpenguins)
 library(knitr)
+library(opendatatoronto)
 ```
 
 # Introduction
 
-In this paper, we use R (@citeR) to analyze a dataset from (@citeODT)
+Canada was once thought of as an extremely safe and peaceful place to live, with very little violence. Unfortunately, Toronto, Canada's most populated city, is starting to change that narrative. Although overall crime rate has decreased about 30% in Canada over the past 20 years [@citeStatista], there has been a recent increase in what may be the most worrisome crime of them all, gun violence. As a resident of Toronto, it seemed as if every other day you were hearing about a new shooting in the news, whereas in the past it was rarely mentioned. This raised a lot of questions about gun violence in Toronto and how it has changed over the past several years, with many worried about this recent upwards trend. The COVID-19 pandemic has caused the focus on gun violence in Toronto to die down a little, as there has been a 35% decrease in shooting occurrences since it started [@citeVilkov], but Toronto should not let this distract them from the severe issue that was becoming worse and worse every year before 2020. 
 
-You can and should cross-reference sections and sub-sections. For instance, Section \@ref(data). R Markdown automatically makes the sections lower case and adds a dash to spaces to generate labels, for instance, Section \@ref(first-discussion-point). 
+In this paper, we use R [@citeR] to analyze a dataset from opendatatoronto [@citeODT] on shooting occurrences in Toronto in order to get a better idea on how exactly gun violence has differed in Toronto recently and tell a story about these changes. The dataset being analyzed contains observations on how many shootings occurred each year in each Toronto police division from 2014-2019. Using tables and useful visualizations like scatter plots and bar graphs, the trends of shooting occurrences in Toronto were able to be seen. It was discovered that shooting occurrences in Toronto have been increasing steadily over the years, and has more than doubled from 2014 and 2019. It was also found that this increase in shootings remained true for all areas and police divisions in Toronto, especially the most populated and largest, meaning this is a citywide issue. Overall, the trends in the data confirm that gun violence and shooting occurrences was becoming an increasingly bigger issue in Toronto overtime.
 
+These findings do unfortunately have some implications to them. There is a lot of racial bias in the police force which tends to result in Black people and other people of colour to be stopped and charged in relation to gun related incidents much more than White people [@citeGelman]. This racial bias that police have against minorities means that the dataset being worked with is most likely biased, and has been effected by the racial injustice shown towards people of colour [@citeBronner]. This means we must view our findings with the understanding that they may not be perfectly correct as a result of this bias, but overall there is still a lot to be learned from the data and results.
 
+The rest of this paper will be as follows: Section \@ref(data) goes over the dataset being used and analyzes it with the use of tables and figures to tell a story about shooting occurrences in Toronto. 
 
 # Data
 
-The dataset being used in this paper was taken from the City of Toronto's open data portal [@citeODT]. It is a subset of a larger collection of data called The Toronto's Police Services Annual Statistical Report. This report contains data based on police related topics including a variety of different types of crimes and other incidents, and administrative information. The dataset that will be analyzed draws from the "Shooting Occurrences" portion of the annual statistical report. It contains all Toronto shooting incidents between 2014 and 2019. A shooting occurrence is described as an altercation where a projectile was shot from a firearm and injured a person [@citeTPS]. Toronto Police Services do not count suicidal attempts or shots taken by Police in the data.
+The dataset being used in this paper was taken from the City of Toronto's open data portal using the opendata toronto package [@citeODT]. It is a subset of a larger collection of data called The Toronto's Police Services Annual Statistical Report. This report contains data based on police related topics including a variety of different types of crimes and other incidents, and administrative information. The dataset that will be analyzed draws from the "Shooting Occurrences" portion of the annual statistical report. It contains all Toronto shooting incidents between 2014 and 2019. A shooting occurrence is described as an altercation where a projectile was shot from a firearm and injured a person [@citeTPS]. Toronto Police Services do not count suicidal attempts or shots taken by Police in the data.
 
 The data is collected by Policemen through the Toronto Police system. Any time a shooting is reported by an officer, it is put into the system, and is eventually added as a observation in the overall dataset. This data technically is the population of all police reported shooting incidents by their definition, but it could also be considered a sample of all shooting incidents since many go unreported. As the dataset is made up of observations that follow a specific definition, it helps to avoid many of the biases we typically see in datasets as there is less subjectivity. All in all, the system Toronto Police uses allows for this dataset to be very reliable and trustworthy. Toronto Police takes their data very seriously, which is evident by their Public Data Safety Portal [@citeTSDP], and thus the dataset this report is working with is quite strong.
 
-Despite this, the data does not come without any implications. 
+Despite this, the data does not come without any implications. Considering we are working with crime and police data, unfortunately there are historically many social and cultural issues that impact our data and make it slightly biased, and thus must be considered from an ethical perspective [@citeCrawford]. As most are aware, there has been a lot clear evidence compiled over the years that show racial injustice against non-white people by the police force. Studies have shown that in the USA, Black and Hispanic people are stopped at a much higher rate than whites, and are twice as likely to be stopped and reported for violent crimes and weapon related issues [@citeGelman]. This racial bias occurs in Toronto as well, as Black people account for 32% of all charges despite only making up 8.8% of the total population [@citeWortley]. That means that this bias towards stopping non-white people, especially in regards to gun related incidents, most like carries over into our shooting occurrences dataset. For example, there may have been more shootings reported in police divisions with a larger minority populations compared to others. This means that our data comes from a biased sample as opposed to a full one, as the police and their racist tendencies have effected the observations in our dataset [@citeBronner]. One may argue that this bias is less likely to occur since the data was taken from Toronto
 
-```{r dataextract, echo = FALSE, message=FALSE}
+Although our dataset may be biased, there is still a lot that can be learned from it. The data can be analyzed in R [@citeR], using packages such as Tidyverse [@citeTidyverse], Dplyr [@citeDplyr], and Knitr [@citeKnitr] in order to produce tables and figures that tell us important information about the dataset and can be use to tell a story about shooting occurrences in Toronto. 
+
+```{r dataextract, echo = FALSE, message=FALSE, fig.pos = "H"}
 
 shooting_occurrences <- read_csv(here::here("inputs/data/shooting_occurences.csv"))
 
-shooting_occurrences %>%
+shooting_occurrences %>% 
   slice(1,2,18,19,36,37,54,55,72,73,90,91) %>%
   select(occurred_year, geo_division, num_shootings) %>%
   kable(
@@ -72,29 +75,33 @@ shooting_occurrences %>%
   )
 
 ```
+
 By grouping the data by year, Table \@ref(tab:yearlyshootings) shows how many shootings have occurred each year in Toronto. It can be seen that shootings have increased dramatically from 2014 to 2019, more than doubling, going from 177 to 492 shootings. For the most part, shootings have also increased each year apart from 2017. This increase in shootings is something worth analyzing, and can be better seen and understood through the use of a visual.
 
 Figure \@ref(fig:scatter) shows this relationship between the number of shootings in Toronto and the year in which they occurred, while also showing which police divisions each observation occurred in.
 
-```{r scatter, fig.cap= "Relationship between number of shootings in each police division and year", echo = FALSE}
+```{r scatter, fig.cap= "Relationship between number of shootings in each police division and year", echo = FALSE, fig.height=4.1}
 shooting_occurrences %>%
   ggplot(aes(x = occurred_year, y = num_shootings, color = geo_division)) +
   geom_point()+
   theme_bw() +
+  theme(legend.key.size = unit(0.5, 'cm'))+
   labs(x = "Year",
        y = "Number of Shootings",
        color = "Geographic Division"
        )
 ```
+
 Plotting every single observation in the dataset gives us a better idea about the changes for Toronto's shooting occurrences, and also allows us to link them to each division. The plot points for each year seem to shift up as a collective year after year, suggesting that shootings are increasing all around Toronto. No police division's plot point is lower in 2019 than it was in 2014, which confirms this thought. Police Divisions that have the most shootings see much bigger yearly increases compared to the regions with less shootings when judging based on magnitude of the increases. Relative to how many shootings occur in each division, all divisions seem to increase by similar amounts.
 
 A bar plot will make it easier to see the increasing relationship between the year and the number of shootings. Figure \@ref(fig:bar1) shows this relationship.
 
-```{r bar1, fig.cap= "Bar plot showing number of shootings in each police division for every year", echo = FALSE}
+```{r bar1, fig.cap= "Bar plot showing number of shootings in each police division for every year", echo = FALSE, fig.height=4.1, fig.pos = "h"}
 shooting_occurrences %>%
   ggplot(aes(x = occurred_year, y = num_shootings, fill = geo_division)) + 
   geom_bar(stat='identity') +
   theme_bw() +
+  theme(legend.key.size = unit(0.5, 'cm'))+
   labs(x = "Year",
        y = "Number of Shootings",
        fill = "Geographic Division"
@@ -102,12 +109,12 @@ shooting_occurrences %>%
   scale_fill_viridis_d(option="turbo")+
   scale_x_continuous(breaks = c(2014,2015,2016,2017,2018,2019)) 
 ```
+
 The increase in shootings per year is even more evident now. The bar for 2019 towers over the much smaller bar representing 2014 shootings, once again showing just how much worse shooting incidents have gotten over these 5 years. On a year to year basis, we see the biggest growth in shootings from 2014 to 2016, suggesting something important changes around this time period. There is then a small dip in 2017, before a steady increase in shootings starts to occur again from this point on wards. A notable increase can be seen from 2018 to 2019, as 2019 saw the biggest increase in shootings since 2016. If this is a sign of another period of large growth like there was from 2014 to 2016, Toronto should be very worried. Regardless, there is certainly no signs of the trend slowing down anytime soon, and the number of shootings should continue to increase in future years, especially once the world recovers from the COVID-19 pandemic.
 
 Figure \@ref(fig:bar1) also makes the changes in number of shootings in each police division more evident. Every single coloured section representing the divisions are larger in 2019 than 2014, and the number of shootings for most divisons increased every single year. The larger police divisions specifically saw massive growths in the size of their colour in the bars of the Figure Figure \@ref(fig:bar1), which was also, albeit slightly less, clear in Figure \@ref(fig:scatter). This can be seen in D12's, D23's, and D31's coloured parts of the bars, as their filled in areas in the bars are very large in 2019 compared to what they were in 2014. A final figure, Figure \@ref(fig:bar2), can be used to show how the number of shootings has changed in each division even further.
 
-
-```{r bar2, fig.cap= "Bar plot showing number of shootings every year for each police divison", echo = FALSE}
+```{r bar2, fig.cap= "Bar plot showing number of shootings every year for each police divison", echo = FALSE, fig.height=4, fig.width=8, fig.pos = "h"}
 shooting_occurrences %>%
   ggplot(aes(x = geo_division, y = num_shootings, 
              fill = as.character(occurred_year))) + 
@@ -119,55 +126,12 @@ shooting_occurrences %>%
        )+
   scale_fill_viridis_d()
 ```
+
 It can further be seen in Figure \@ref(fig:bar2) that every police division had more shootings occur within it in 2019, the yellow part of every bar, compared to in 2014 which is shown by the dark purple parts of the bars. It is also clear how almost every police division has seen a steady increase in shootings since the size each colour representing a year are almost always increasing in size.
 
 The divisions with much more shooting activity than the rest are very evident in Figure \@ref(fig:bar2) as their overall bar size are much taller than the rest of the divisions, which is important to note as Toronto Police may opt to add more police presence to these divisions in the future. The fact that the yellow portions of the bars representing 2019 are so much larger relative to the dark purple bars representing 2014 really shows just how bad the number of shootings in these areas specifically has gotten.
 
-Overall, our data has painted a clear story about the shooting occurences in Toronto. It is extremely evident based on Table \ref@(tab:yearlyshootings), Figure \@ref(fig:scatter), and Figure \@ref(fig:bar1) that the number of shooting occurrences in Toronto have increased greatly from 2014 to 2019, and that this increase has been occurring steadily over the years since 2014. While the other figures helped, Figure \ref@(fig:bar2) made it clear that shooting occurrences have been increasing all throughout Toronto in every single police division, although some of the larger divisions in particular have seen even bigger increases than the rest.
-
-While the data from Open Data Toronto (@citeODT) and Toronto's Police Services [@citeTPS] has been very valuable and was used to make important realizations about shooting occurrences in Toronto, it does not come without its implications. 
-
-
-# Model
-
-\begin{equation}
-Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}  (\#eq:bayes)
-\end{equation}
-
-Equation \@ref(eq:bayes) seems useful, eh?
-
-Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
-
-# Results
-
-# Discussion
-
-## First discussion point
-
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
-
-## Second discussion point
-
-## Third discussion point
-
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
-
-\newpage
-
-\appendix
-
-# Appendix {-}
-
-
-# Additional details
-
-
-\newpage
+Overall, our data has painted a clear story about the shooting occurences in Toronto. It is extremely evident based on Table \@ref(tab:yearlyshootings), Figure \@ref(fig:scatter), and Figure \@ref(fig:bar1) that the number of shooting occurrences in Toronto have increased greatly from 2014 to 2019, and that this increase has been occurring steadily over the years since 2014. While the other figures helped, Figure \@ref(fig:bar2) made it clear that shooting occurrences have been increasing all throughout Toronto in every single police division, although some of the larger divisions in particular have seen even bigger increases than the rest. It is still important to note that the racial bias towards people of colour by the Toronto Police has caused our dataset to be biased, which may have caused implications for our findings.
 
 
 # References
